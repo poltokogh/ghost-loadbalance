@@ -1,0 +1,47 @@
+services:
+  mysql:
+    build: ./mysql
+    container_name: mysql-db
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - ghostnet
+
+  ghost:
+    build: ./ghost
+#    container_name: ghost-cms
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      database__client: mysql
+      database__connection__host: mysql
+      database__connection__user: ghostuser
+      database__connection__password: ghostpass
+      database__connection__database: ghostdb
+    networks:
+      - ghostnet
+
+  haproxy:
+    build: ./haproxy
+    container_name: haproxy-lb
+    depends_on:
+      ghost:
+        condition: service_started
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8404:8404"
+    networks:
+      - ghostnet
+
+volumes:
+  mysql_data:
+
+networks:
+  ghostnet:
