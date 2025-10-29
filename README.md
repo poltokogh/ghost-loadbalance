@@ -24,8 +24,8 @@ Pastikan kamu sudah memiliki:
 3. Buka tab SSL/TLS → Origin Server
 4. Klik Create Certificate, pilih opsi RSA
 5. Unduh dua file yang dihasilkan:
-* origin.pem
-- origin-key.pem
+    * origin.pem
+    - origin-key.pem
 6. Gabungkan kedua file menjadi satu sertifikat:
    ```bash
    cat origin.pem origin-key.pem > ~/ghost-loadbalance/haproxy/haproxy-origin.pem
